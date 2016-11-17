@@ -1,10 +1,9 @@
 //Customer.java
 /**/
 
-public class Customer{
+public class Customer extends Person{
 	
 	//attributes
-	private Person customer;
 	private String accountNo;
 	private String email;
 	private int pin; 
@@ -15,7 +14,8 @@ public class Customer{
 	//constructors
 	public Customer(){
 		
-		customer = new Person();
+		super();
+		//customer = new Person();
 		
 		accountNo = "Unknown";
 		email = "No Email Specified";
@@ -24,7 +24,10 @@ public class Customer{
 		intRate = 0.0; 
 	}
 	
-	public Customer(String accountNo, String email, int pin, double balance, double intRate){
+	public Customer(String accountNo, String email, int pin, double balance, double intRate, 
+													String name, int age, String address, char gender){
+		
+		super(name, age, address, gender);
 		
 		this.accountNo = accountNo;
 		this.email = email;
@@ -34,15 +37,8 @@ public class Customer{
 	}
 	
 	
-	//mutators
-	public void setCustomer(String name, int age, String address, char gender){
-		
-		customer.setName(name);
-		customer.setAge(age);
-		customer.setAddress(address);
-		customer.setGender(gender);
-	}
 	
+	//mutators
 	public void setAccountNo(String accountNo){
 		
 		this.accountNo = accountNo;
@@ -68,12 +64,9 @@ public class Customer{
 		this.intRate = intRate;
 	}
 	
-	//accessors
-	public Person getCustomer(){
-		
-		return customer;
-	}
 	
+	
+	//accessors
 	public String getAccountNo(){
 		
 		return accountNo;
@@ -100,8 +93,9 @@ public class Customer{
 	}
 	
 	
+	
 	public String toString(){
 		
-		return customer + "\nAccountNo: " + accountNo + "\nEmail: " + email + "\nPassword: " + pin + "\nBalance: " + balance + "\nInterest Rate: " + intRate + "%";
+		return "Customer Info: " + super.toString() + "\nAccount No: " + accountNo + "\nEmail: " + email + "\nPassword: " + pin + "\nBalance: " + balance + "\nInterest Rate: " + intRate + "%";
 	}
 }
