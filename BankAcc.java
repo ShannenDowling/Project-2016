@@ -10,6 +10,7 @@ public class BankAcc extends JFrame implements ActionListener{
 	JButton registerButton, loginButton;
 	JMenu fileMenu, accountsMenu, optionsMenu;
 	JLabel response;
+	JTextArea display;
 	
 	public static void main(String args[]){
 		
@@ -52,8 +53,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		menuBar.add(optionsMenu);
 		
 		//response
-		response = new JLabel("Menu tester");
-		//respone.setSize(250,50);
+		response = new JLabel();
 		cPane.add(response);
 		
 		//label
@@ -69,6 +69,10 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		registerButton.addActionListener(this);
 		loginButton.addActionListener(this);
+		
+		//customer
+		display = new JTextArea();
+		cPane.add(display);
 	}
 	//window
 	private class WindowEventHandler extends WindowAdapter{
@@ -153,20 +157,30 @@ public class BankAcc extends JFrame implements ActionListener{
 	
 	
 	public void actionPerformed(ActionEvent e){
+		
 		//buttons	
 		if(e.getSource() == registerButton)	
 		{
-			JOptionPane.showInputDialog(null,"Please enter your name");
+			Customer cust1 = new Customer();
+			cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
+			cust1.setAge(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Age")));
+			cust1.setAddress(JOptionPane.showInputDialog(null,"Enter Address"));
+			cust1.setGender(JOptionPane.showInputDialog(null,"Enter Gender"));
+			cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
+			cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
+			cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
+			cust1.setBalance(Double.parseDouble(JOptionPane.showInputDialog(null,"Enter Current Balance")));
 			
-			JOptionPane.showInputDialog(null,"Please enter your email");
+			display.append("Customer Info: " + cust1.toString());
 		}
 			
 		else if(e.getSource() == loginButton)
 		{
 			JOptionPane.showInputDialog(null,"Please enter your email");
 			
-			JOptionPane.showInputDialog(null,"Please enter your password");	
+			JOptionPane.showInputDialog(null,"Please enter your pin");	
 		}
+		
 		//menu
 		else
 		{

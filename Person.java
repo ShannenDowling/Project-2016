@@ -7,16 +7,16 @@ public class Person{
 	private String name;
 	private int age;
 	private String address;
-	private char gender;
+	private String gender;
 	
 	
 	//constructors
 	public Person(){
 		
-		this("Unknown", 0, "No Address Specified", 'U');
+		this("Unknown", 0, "No Address Specified", "U");
 	}
 	
-	public Person(String name, int age, String address, char gender){
+	public Person(String name, int age, String address, String gender){
 		
 		this.name = name;
 		this.age = age;
@@ -41,7 +41,7 @@ public class Person{
 		this.address = address;
 	}
 	
-	public void setGender(char gender){
+	public void setGender(String gender){
 		
 		this.gender = gender;
 	}
@@ -63,7 +63,7 @@ public class Person{
 		return address;
 	}
 	
-	public char getGender(){
+	public String getGender(){
 		
 		return gender;
 	}
@@ -72,6 +72,6 @@ public class Person{
 	
 	public String toString(){
 		
-		return name + "\t" + age + "\t " + address + "\t" + gender;
+		return name + ", " + age + ", " + address + ", " + gender;
 	}
 }

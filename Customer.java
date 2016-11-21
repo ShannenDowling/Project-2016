@@ -1,44 +1,50 @@
 //Customer.java
 /**/
 
+import javax.swing.*;
+
 public class Customer extends Person{
 	
 	//attributes
+	//private Person customer;
 	private String accountNo;
 	private String email;
 	private int pin; 
 	private double balance;
-	private double intRate;
 	
 	
 	//constructors
 	public Customer(){
 		
 		super();
-		//customer = new Person();
-		
+	
 		accountNo = "Unknown";
 		email = "No Email Specified";
-		pin = 1234;
-		balance = 0.0;
-		intRate = 0.0; 
+		pin = 0000;
+		balance = 0.0; 
 	}
 	
-	public Customer(String accountNo, String email, int pin, double balance, double intRate, 
-													String name, int age, String address, char gender){
+	public Customer(String accountNo, String email, int pin, double balance, 
+					String name, int age, String address, String gender){
 		
-		super(name, age, address, gender);
+		super(name,age,address,gender);
 		
 		this.accountNo = accountNo;
 		this.email = email;
 		this.pin = pin;
 		this.balance = balance;
-		this.intRate = intRate;
 	}
 	
 	
-	
 	//mutators
+	/*public void setCustomer(String name, int age, String address, String gender){
+		
+		customer.setName(name);
+		customer.setAge(age);
+		customer.setAddress(address);
+		customer.setGender(gender);
+	}*/
+	
 	public void setAccountNo(String accountNo){
 		
 		this.accountNo = accountNo;
@@ -59,14 +65,13 @@ public class Customer extends Person{
 		this.balance = balance;
 	}
 
-	public void setIntRate(double intRate){
-		
-		this.intRate = intRate;
-	}
-	
-	
-	
+
 	//accessors
+	/*public Person getCustomer(){
+		
+		return customer;
+	}*/
+	
 	public String getAccountNo(){
 		
 		return accountNo;
@@ -87,15 +92,10 @@ public class Customer extends Person{
 		return balance;
 	}
 	
-	public double getIntRate(){
-		
-		return intRate;
-	}
-	
 	
 	
 	public String toString(){
 		
-		return "Customer Info: " + super.toString() + "\nAccount No: " + accountNo + "\nEmail: " + email + "\nPassword: " + pin + "\nBalance: " + balance + "\nInterest Rate: " + intRate + "%";
+		return super.toString() + "\nAccountNo: " + accountNo + "\nEmail: " + email + "\nPassword: " + pin + "\nBalance: " + balance;
 	}
 }
