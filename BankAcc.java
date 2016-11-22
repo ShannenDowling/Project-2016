@@ -4,13 +4,16 @@
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.*;
 
 public class BankAcc extends JFrame implements ActionListener{
 	
-	JButton registerButton, loginButton;
+	BankAcc acc1;
+	JButton registerButton, loginButton, saveCustButton, cancelButton;
 	JMenu fileMenu, accountsMenu, optionsMenu;
 	JLabel response;
 	JTextArea display;
+	ArrayList<Customer> customers;
 	
 	public static void main(String args[]){
 		
@@ -24,6 +27,12 @@ public class BankAcc extends JFrame implements ActionListener{
 		BankAcc loginButton = new BankAcc();
 		registerButton.setVisible(true);
 		loginButton.setVisible(true);
+		
+		BankAcc saveCustButton = new BankAcc();
+		saveCustButton.setVisible(true);
+		
+		BankAcc cancelButton = new BankAcc();
+		cancelButton.setVisible(true);
 	}
 	
 	public BankAcc(){
@@ -73,16 +82,33 @@ public class BankAcc extends JFrame implements ActionListener{
 		//customer
 		display = new JTextArea();
 		cPane.add(display);
+		
+		//saveCust
+		saveCustButton = new JButton("Save Customer");
+		saveCustButton.addActionListener(this);
+		
+		//cancel
+		cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(this);
 	}
+	
 	//window
 	private class WindowEventHandler extends WindowAdapter{
 		
 		public void windowClosing(WindowEvent e){
 			
-			JOptionPane.showMessageDialog(null,"Closing Window", "Closing",
-			JOptionPane.WARNING_MESSAGE);
+			int confirm = JOptionPane.showConfirmDialog(null,"Are you sure you want to Exit?", 
+			"Closing", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE);
 			
-			System.exit(0);
+			if(confirm == 0)
+			{
+				System.exit(0);
+			}
+			
+			else
+			{
+				acc1.setVisible(true);
+			}
 		}
 	}
 	
@@ -93,12 +119,12 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		fileMenu = new JMenu("File");
 		
-		item = new JMenuItem("Login");
+		item = new JMenuItem("Register");
 		item.addActionListener(this);
 		
 		fileMenu.add(item);
 		
-		item = new JMenuItem("Check Balance");
+		item = new JMenuItem("Login");
 		item.addActionListener(this);
 		
 		fileMenu.add(item);
@@ -114,19 +140,19 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		JMenuItem item;
 		
-		accountsMenu = new JMenu("Accounts");
+		accountsMenu = new JMenu("Customers");
 		
-		item = new JMenuItem("Add");
+		item = new JMenuItem("List Customers");
 		item.addActionListener(this);
 		
 		accountsMenu.add(item);
 		
-		item = new JMenuItem("Remove");
+		item = new JMenuItem("Add Customer");
 		item.addActionListener(this);
 		
 		accountsMenu.add(item);
 		
-		item = new JMenuItem("Update");
+		item = new JMenuItem("Remove Customer");
 		item.addActionListener(this);
 		
 		accountsMenu.add(item);
@@ -137,7 +163,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		JMenuItem item;
 		
-		optionsMenu = new JMenu("Options");
+		optionsMenu = new JMenu("Banking Options");
 		
 		item = new JMenuItem("Withdraw");
 		item.addActionListener(this);
@@ -155,13 +181,11 @@ public class BankAcc extends JFrame implements ActionListener{
 		optionsMenu.add(item);
 	}
 	
-	
-	public void actionPerformed(ActionEvent e){
-		
-		//buttons	
-		if(e.getSource() == registerButton)	
-		{
-			Customer cust1 = new Customer();
+	//register
+	public void register()
+	{
+		Customer cust1 = new Customer();
+			
 			cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
 			cust1.setAge(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Age")));
 			cust1.setAddress(JOptionPane.showInputDialog(null,"Enter Address"));
@@ -170,17 +194,48 @@ public class BankAcc extends JFrame implements ActionListener{
 			cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
 			cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
 			cust1.setBalance(Double.parseDouble(JOptionPane.showInputDialog(null,"Enter Current Balance")));
+		
+		customers = new ArrayList<Customer>();
+		customers.add(cust1);
+				
+		display.append("Customer Info: " + cust1.toString());
 			
-			display.append("Customer Info: " + cust1.toString());
+		Container cPane = getContentPane();
+		cPane.add(saveCustButton);
+		cPane.add(cancelButton);
+	}
+	
+	public void login()
+	{
+		Customer cust1 = new Customer();
+		
+			cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
+			cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
+	}
+	
+	public void actionPerformed(ActionEvent e){
+		
+		//buttons	
+		if(e.getSource() == registerButton)	
+		{
+			register();
 		}
 			
 		else if(e.getSource() == loginButton)
 		{
-			JOptionPane.showInputDialog(null,"Please enter your email");
-			
-			JOptionPane.showInputDialog(null,"Please enter your pin");	
+			login();	
 		}
 		
+		else if(e.getSource() == saveCustButton)
+		{
+			JOptionPane.showMessageDialog(null,"You selected save", "Save", JOptionPane.INFORMATION_MESSAGE);
+		}
+			
+		else if(e.getSource() == cancelButton)
+		{
+			display.setText("No Customer Added");
+		}
+			
 		//menu
 		else
 		{
@@ -193,10 +248,37 @@ public class BankAcc extends JFrame implements ActionListener{
 				System.exit(0);
 			}
 		
+			else if(menuName.equals("Register"))
+			{
+				register();
+			}
+			
+			else if(menuName.equals("Login"))
+			{
+				login();	
+			}
+			
+			/*else if(menuName.equals("List Customers"))
+			{
+				
+			}*/
+			
+			else if(menuName.equals("Add Customer"))
+			{
+				register();
+			}
+			
+			else if(menuName.equals("Remove Customer"))
+			{
+				String CustNum = JOptionPane.showInputDialog(null, "Please enter the name of the customer would you like to remove?");
+				
+				customers.remove(CustNum);
+			}
+			
 			else 
 			{
 				response.setText("Menu Item '" + menuName + "' is selected");
 			}	
 		}
-	}
+	}	
 }
