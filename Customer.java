@@ -24,13 +24,13 @@ public class Customer extends Person{
 		super();
 	
 		accountNo = "Unknown";
-		email = "No Email Specified";
-		pin = 0000;
+		email = "admin";
+		pin = 1234;
 		balance = 0.0; 
 	}
 	
-	public Customer(String accountNo, String email, int pin, double balance, 
-					String name, int age, String address, String gender){
+	public Customer(String name, int age, String address, String gender, String accountNo, 
+					String email, int pin, double balance){
 		
 		super(name,age,address,gender);
 		
@@ -125,6 +125,6 @@ public class Customer extends Person{
 	
 	public String toString(){
 		
-		return super.toString() + "\nAccountNo: " + accountNo + "\nEmail: " + email + "\nPassword: " + pin + "\nBalance: " + balance +"\n\n";
+		return super.toString() + "\nAccountNo: " + accountNo + "\nEmail: " + email + "\nPassword: " + pin + "\nBalance: €" + String.format("%.2f", balance) + "\n\n";
 	}
 }

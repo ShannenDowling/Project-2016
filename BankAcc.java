@@ -9,30 +9,24 @@ import java.util.*;
 public class BankAcc extends JFrame implements ActionListener{
 	
 	BankAcc acc1;
-	JButton registerButton, loginButton, saveCustButton, cancelButton;
-	JMenu fileMenu, accountsMenu, optionsMenu;
+	JLabel logoLabel;
+	JButton saveCustButton, cancelButton;
+	JMenu fileMenu, customersMenu, optionsMenu;
 	JLabel response;
-	JTextArea display;
+	JTextArea display, calcList, custList;
 	ArrayList<Customer> customers;
+	Customer cust1 = new Customer();
+	double bal;
+	
+	//customer
+	String name, add, gender, accNo, email;  
+	int age, pin;
+	double balance;
 	
 	public static void main(String args[]){
 		
 		BankAcc acc1 = new BankAcc();
 		acc1.setVisible(true);
-		
-		BankAcc menu = new BankAcc();
-		menu.setVisible(true);
-		
-		BankAcc registerButton = new BankAcc();
-		BankAcc loginButton = new BankAcc();
-		registerButton.setVisible(true);
-		loginButton.setVisible(true);
-		
-		BankAcc saveCustButton = new BankAcc();
-		saveCustButton.setVisible(true);
-		
-		BankAcc cancelButton = new BankAcc();
-		cancelButton.setVisible(true);
 	}
 	
 	public BankAcc(){
@@ -51,15 +45,19 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		//menu
 		createFileMenu();
-		createAccountsMenu();
+		createCustomersMenu();
 		createOptionsMenu();
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		menuBar.setBackground(Color.orange);
 		menuBar.add(fileMenu);
-		menuBar.add(accountsMenu);
+		menuBar.add(customersMenu);
 		menuBar.add(optionsMenu);
+		
+		//logo
+		logoLabel = new JLabel(new ImageIcon("logo.png"));//image from google images
+		cPane.add(logoLabel);
 		
 		//response
 		response = new JLabel();
@@ -68,20 +66,16 @@ public class BankAcc extends JFrame implements ActionListener{
 		//label
 		JLabel welcomeMsg = new JLabel("Welcome to your Bank Account.");
 		cPane.add(welcomeMsg);
-		
-		//buttons
-		registerButton = new JButton("Register");
-		loginButton = new JButton("Login");
-		
-		cPane.add(registerButton);
-		cPane.add(loginButton);
-		
-		registerButton.addActionListener(this);
-		loginButton.addActionListener(this);
-		
+	
 		//customer
 		display = new JTextArea();
 		cPane.add(display);
+		
+		calcList = new JTextArea();
+		cPane.add(calcList);
+		
+		custList = new JTextArea();
+		cPane.add(custList);
 		
 		//saveCust
 		saveCustButton = new JButton("Save Customer");
@@ -136,26 +130,26 @@ public class BankAcc extends JFrame implements ActionListener{
 	}
 	
 	//accountsMenu
-	private void createAccountsMenu(){
+	private void createCustomersMenu(){
 		
 		JMenuItem item;
 		
-		accountsMenu = new JMenu("Customers");
+		customersMenu = new JMenu("Customers");
 		
 		item = new JMenuItem("List Customers");
 		item.addActionListener(this);
 		
-		accountsMenu.add(item);
+		customersMenu.add(item);
 		
 		item = new JMenuItem("Add Customer");
 		item.addActionListener(this);
 		
-		accountsMenu.add(item);
+		customersMenu.add(item);
 		
 		item = new JMenuItem("Remove Customer");
 		item.addActionListener(this);
 		
-		accountsMenu.add(item);
+		customersMenu.add(item);
 	}
 	
 	//optionsMenu
@@ -175,7 +169,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		optionsMenu.add(item);
 		
-		item = new JMenuItem("Interest");
+		item = new JMenuItem("Calculate Interest");
 		item.addActionListener(this);
 		
 		optionsMenu.add(item);
@@ -183,21 +177,31 @@ public class BankAcc extends JFrame implements ActionListener{
 	
 	//register
 	public void register()
-	{
-		Customer cust1 = new Customer();
+	{	
+		cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
+		name = cust1.getName();
+		 
+		cust1.setAge(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Age")));
+		age = cust1.getAge();
 			
-			cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
-			cust1.setAge(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Age")));
-			cust1.setAddress(JOptionPane.showInputDialog(null,"Enter Address"));
-			cust1.setGender(JOptionPane.showInputDialog(null,"Enter Gender"));
-			cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
-			cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
-			cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
-			cust1.setBalance(Double.parseDouble(JOptionPane.showInputDialog(null,"Enter Current Balance")));
-		
-		customers = new ArrayList<Customer>();
-		customers.add(cust1);
-				
+		cust1.setAddress(JOptionPane.showInputDialog(null,"Enter Address"));
+		add = cust1.getAddress();
+			 
+		cust1.setGender(JOptionPane.showInputDialog(null,"Enter Gender"));
+		gender = cust1.getAddress();
+			
+		cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
+		accNo = cust1.getAccountNo();		
+
+		cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
+		email = cust1.getEmail();
+					
+		cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
+		pin = cust1.getPin();
+			
+		cust1.setBalance(Double.parseDouble(JOptionPane.showInputDialog(null,"Enter Current Balance")));
+		balance = cust1.getBalance();
+					
 		display.append("Customer Info: " + cust1.toString());
 			
 		Container cPane = getContentPane();
@@ -207,33 +211,39 @@ public class BankAcc extends JFrame implements ActionListener{
 	
 	public void login()
 	{
-		Customer cust1 = new Customer();
+		String adminEmail = "admin";
+		int adminPin = 1234;
 		
-			cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
-			cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
+		cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
+		cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin"))); 
+			
+		if(cust1.getEmail() == adminEmail && cust1.getPin() == adminPin)
+		{
+			JOptionPane.showMessageDialog(null,"Welcome to the System","Welcome!",
+			JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		else
+		{
+			JOptionPane.showMessageDialog(null,"Error! Your email or pin was incorrect","Warning!",
+			JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e){
 		
 		//buttons	
-		if(e.getSource() == registerButton)	
+		if(e.getSource() == saveCustButton)
 		{
-			register();
-		}
+			JOptionPane.showMessageDialog(null,"Customer Saved", "Save", JOptionPane.INFORMATION_MESSAGE);
 			
-		else if(e.getSource() == loginButton)
-		{
-			login();	
-		}
-		
-		else if(e.getSource() == saveCustButton)
-		{
-			JOptionPane.showMessageDialog(null,"You selected save", "Save", JOptionPane.INFORMATION_MESSAGE);
+			customers = new ArrayList<Customer>();
+			customers.add(new Customer (name, age, add, gender, accNo, email, pin, balance));
 		}
 			
 		else if(e.getSource() == cancelButton)
 		{
-			display.setText("No Customer Added");
+			display.setText("You selected Cancel\nNo Customer Added");
 		}
 			
 		//menu
@@ -248,8 +258,10 @@ public class BankAcc extends JFrame implements ActionListener{
 				System.exit(0);
 			}
 		
+			//fileMenu
 			else if(menuName.equals("Register"))
 			{
+				display.setVisible(true);
 				register();
 			}
 			
@@ -258,21 +270,114 @@ public class BankAcc extends JFrame implements ActionListener{
 				login();	
 			}
 			
-			/*else if(menuName.equals("List Customers"))
+			//customerMenu
+			else if(menuName.equals("List Customers"))
 			{
+				if(customers.size()<1)
+				{
+					custList.setText("No Customers to display");
+				}
 				
-			}*/
+				else
+				{
+					display.setVisible(false);
+					custList.setVisible(true);
+					
+					for(int x=0; x<customers.size(); x++)
+					{
+						custList.append(customers.get(x).toString());
+					}
+				}	
+			}
 			
 			else if(menuName.equals("Add Customer"))
 			{
-				register();
+				display.setVisible(true);
+				custList.setVisible(false);
+				
+				register();	
 			}
 			
 			else if(menuName.equals("Remove Customer"))
 			{
-				String CustNum = JOptionPane.showInputDialog(null, "Please enter the name of the customer would you like to remove?");
+				String custName, cust;
+					
+				custName = JOptionPane.showInputDialog(null, "Please enter the name of the customer would you like to remove?");
 				
-				customers.remove(CustNum);
+				cust = cust1.getName();
+				
+				if(custName == cust)
+				{
+					customers.remove(cust);
+				}
+			}
+			
+			//optionsMenu
+			else if(menuName.equals("Withdraw"))
+			{
+				display.setVisible(true);
+				custList.setVisible(false);
+				
+				double amount;
+				
+				bal = cust1.getBalance();
+				calcList.setText("Your current balance is €" + String.format("%.2f",bal));
+				
+				amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount you would like to withdraw"));
+				calcList.append("\nWithdrawal Amount: €" + String.format("%.2f",amount));
+				
+				bal -= amount;
+				calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
+			}
+			
+			else if(menuName.equals("Lodge"))
+			{
+				display.setVisible(true);
+				custList.setVisible(false);
+				
+				double amount;
+				
+				bal = cust1.getBalance();
+				calcList.setText("Your current balance is €" + String.format("%.2f",balance));
+				
+				amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount you would like to lodge to your account"));
+				calcList.append("\nLodgement Amount: €" + String.format("%.2f",amount));
+				
+				bal += amount;
+				calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
+			}
+			
+			else if(menuName.equals("Calculate Interest"))
+			{
+				display.setVisible(true);
+				custList.setVisible(false);
+				
+				double intDue;
+				
+				bal = cust1.getBalance();
+				calcList.setText("Your current balance is €" + String.format("%.2f",bal));
+				
+				if(bal<0)
+				{
+					JOptionPane.showMessageDialog(null,"Error! Invalid Balance", "Error", JOptionPane.WARNING_MESSAGE);	
+				}
+				
+				else if(bal<1000)
+				{
+					calcList.append("\nInterest Rate: 5%");
+
+					intDue = balance * 0.05f;
+					calcList.append("\nInterest Due this month is €" + String.format("%.2f", intDue));	
+				}
+				
+				else
+				{
+					calcList.append("\nInterest Rate: 10%");
+
+					intDue = balance * 0.10f;
+					calcList.append("\nInterest Due this month is €" + String.format("%.2f", intDue));
+				}
+				
 			}
 			
 			else 
