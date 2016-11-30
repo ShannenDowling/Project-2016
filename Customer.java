@@ -7,8 +7,9 @@
  */
  
 import javax.swing.*;
+import java.io.*;
 
-public class Customer extends Person{
+public class Customer extends Person implements Serializable{
 	
 	//declare attributes
 	//private Person customer;
@@ -51,7 +52,7 @@ public class Customer extends Person{
 	}*/
 	
 	/**sets the account number of the Customer object
-	 *@param account number of Bicycle object
+	 *@param account number of Customer object
 	 **/
 	public void setAccountNo(String accountNo){
 		
@@ -59,7 +60,7 @@ public class Customer extends Person{
 	}
 	
 	/**sets the email of the Customer object
-	 *@param email of Bicycle object
+	 *@param email of Customer object
 	 **/
 	public void setEmail(String email){
 		
@@ -67,7 +68,7 @@ public class Customer extends Person{
 	}
 	
 	/**sets the pin number of the Customer object
-	 *@param pin number of Bicycle object
+	 *@param pin number of Customer object
 	 **/
 	public void setPin(int pin){
 		
@@ -75,7 +76,7 @@ public class Customer extends Person{
 	}
 	
 	/**sets the balance of the Customer object
-	 *@param account  number of Bicycle object
+	 *@param account  number of Customer object
 	 **/
 	public void setBalance(double balance){
 		

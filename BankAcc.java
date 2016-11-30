@@ -5,17 +5,23 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.*;
+import java.io.*;
+
+@SuppressWarnings({"unchecked", "deprication"})
 
 public class BankAcc extends JFrame implements ActionListener{
 	
 	BankAcc acc1;
 	JLabel logoLabel;
-	JButton saveCustButton, cancelButton;
+	JButton registerButton, loginButton, saveCustButton, cancelButton;
 	JMenu fileMenu, customersMenu, optionsMenu;
-	JLabel response;
+	JLabel buttonLabel, response;
 	JTextArea display, calcList, custList;
-	ArrayList<Customer> customers;
+	
 	Customer cust1 = new Customer();
+	ArrayList<Customer> customers;
+	
+	//calculations
 	double bal;
 	
 	//customer
@@ -23,10 +29,11 @@ public class BankAcc extends JFrame implements ActionListener{
 	int age, pin;
 	double balance;
 	
+	
 	public static void main(String args[]){
 		
 		BankAcc acc1 = new BankAcc();
-		acc1.setVisible(true);
+		acc1.setVisible(true); 
 	}
 	
 	public BankAcc(){
@@ -35,7 +42,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		setSize(400,500);
 		setLocation(200,200);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
 		addWindowListener(new WindowEventHandler());
 		
@@ -66,7 +73,20 @@ public class BankAcc extends JFrame implements ActionListener{
 		//label
 		JLabel welcomeMsg = new JLabel("Welcome to your Bank Account.");
 		cPane.add(welcomeMsg);
-	
+		
+		buttonLabel = new JLabel("Please Register or Login: ");
+		cPane.add(buttonLabel);
+		
+		//register
+		registerButton = new JButton("Register");
+		registerButton.addActionListener(this);
+		cPane.add(registerButton);
+		
+		//login
+		loginButton = new JButton("Login");
+		loginButton.addActionListener(this);
+		cPane.add(loginButton);
+		
 		//customer
 		display = new JTextArea();
 		cPane.add(display);
@@ -97,12 +117,7 @@ public class BankAcc extends JFrame implements ActionListener{
 			if(confirm == 0)
 			{
 				System.exit(0);
-			}
-			
-			else
-			{
-				acc1.setVisible(true);
-			}
+			}	
 		}
 	}
 	
@@ -113,12 +128,12 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		fileMenu = new JMenu("File");
 		
-		item = new JMenuItem("Register");
+		item = new JMenuItem("Login");
 		item.addActionListener(this);
 		
 		fileMenu.add(item);
 		
-		item = new JMenuItem("Login");
+		item = new JMenuItem("Open");
 		item.addActionListener(this);
 		
 		fileMenu.add(item);
@@ -176,7 +191,7 @@ public class BankAcc extends JFrame implements ActionListener{
 	}
 	
 	//register
-	public void register()
+	public void add()
 	{	
 		cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
 		name = cust1.getName();
@@ -217,7 +232,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
 		cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin"))); 
 			
-		if(cust1.getEmail() == adminEmail && cust1.getPin() == adminPin)
+		if(cust1.getEmail().equals(adminEmail) && cust1.getPin() == adminPin)
 		{
 			JOptionPane.showMessageDialog(null,"Welcome to the System","Welcome!",
 			JOptionPane.INFORMATION_MESSAGE);
@@ -230,17 +245,70 @@ public class BankAcc extends JFrame implements ActionListener{
 		}
 	}
 	
+	public void save() throws IOException
+	{
+		File bankFile = new File("myCustomers.dat");
+		FileOutputStream outputStream = new FileOutputStream(bankFile);
+		ObjectOutputStream oob = new ObjectOutputStream(outputStream);					//code from examples on x drive
+		oob.writeObject(customers);
+		oob.close();
+	}
+	
+	public void open()
+	{
+		try
+		{
+			ObjectInputStream input;
+      		input = new ObjectInputStream(new FileInputStream ("myCustomers.dat"));
+        	customers  = (ArrayList<Customer>) input.readObject();							//code from examples on x drive
+      		input.close();
+		}
+		
+		catch(Exception e)
+		{
+			JOptionPane.showMessageDialog(null,"open didn't work");
+      		e.printStackTrace();		
+		}	
+	}
+	
 	public void actionPerformed(ActionEvent e){
 		
-		//buttons	
-		if(e.getSource() == saveCustButton)
+		//buttons
+		if(e.getSource() == registerButton)
+		{
+			add();
+			
+			registerButton.setVisible(false);
+			loginButton.setVisible(false);
+			buttonLabel.setVisible(false);
+		}	
+			
+		else if(e.getSource() == loginButton)
+		{
+			login();
+			
+			registerButton.setVisible(false);
+			loginButton.setVisible(false);
+			buttonLabel.setVisible(false);	
+		}
+			
+		else if(e.getSource() == saveCustButton)
 		{
 			JOptionPane.showMessageDialog(null,"Customer Saved", "Save", JOptionPane.INFORMATION_MESSAGE);
 			
 			customers = new ArrayList<Customer>();
 			customers.add(new Customer (name, age, add, gender, accNo, email, pin, balance));
-		}
 			
+			try{
+      	 		save();
+      	 		JOptionPane.showMessageDialog(null,"Data saved successfully");
+      	 	}
+      	 	catch (IOException f){
+      	 		JOptionPane.showMessageDialog(null,
+      	 		"Not able to save the file:\nCheck the console printout for clues to why ");
+      	 		f.printStackTrace();
+			}
+		}	
 		else if(e.getSource() == cancelButton)
 		{
 			display.setText("You selected Cancel\nNo Customer Added");
@@ -259,10 +327,9 @@ public class BankAcc extends JFrame implements ActionListener{
 			}
 		
 			//fileMenu
-			else if(menuName.equals("Register"))
+			else if(menuName.equals("Open"))
 			{
-				display.setVisible(true);
-				register();
+				open();
 			}
 			
 			else if(menuName.equals("Login"))
@@ -273,6 +340,10 @@ public class BankAcc extends JFrame implements ActionListener{
 			//customerMenu
 			else if(menuName.equals("List Customers"))
 			{
+				calcList.setVisible(false);
+				saveCustButton.setVisible(false);
+				cancelButton.setVisible(false);
+				
 				if(customers.size()<1)
 				{
 					custList.setText("No Customers to display");
@@ -292,32 +363,34 @@ public class BankAcc extends JFrame implements ActionListener{
 			
 			else if(menuName.equals("Add Customer"))
 			{
+				calcList.setVisible(false);
 				display.setVisible(true);
 				custList.setVisible(false);
+				saveCustButton.setVisible(true);
+				cancelButton.setVisible(true);
 				
-				register();	
+				add();	
 			}
 			
 			else if(menuName.equals("Remove Customer"))
 			{
-				String custName, cust;
+				calcList.setVisible(false);
+				custList.setVisible(true);
+				
+				int cust;
 					
-				custName = JOptionPane.showInputDialog(null, "Please enter the name of the customer would you like to remove?");
+				cust = Integer.parseInt(JOptionPane.showInputDialog(null, "Which customer would you like to remove?"));
 				
-				cust = cust1.getName();
-				
-				if(custName == cust)
-				{
-					customers.remove(cust);
-				}
+				customers.remove(cust);
 			}
 			
 			//optionsMenu
 			else if(menuName.equals("Withdraw"))
 			{
-				display.setVisible(true);
+				calcList.setVisible(true);
+				display.setVisible(false);
 				custList.setVisible(false);
-				
+					
 				double amount;
 				
 				bal = cust1.getBalance();
@@ -332,7 +405,8 @@ public class BankAcc extends JFrame implements ActionListener{
 			
 			else if(menuName.equals("Lodge"))
 			{
-				display.setVisible(true);
+				calcList.setVisible(true);
+				display.setVisible(false);
 				custList.setVisible(false);
 				
 				double amount;
@@ -349,7 +423,8 @@ public class BankAcc extends JFrame implements ActionListener{
 			
 			else if(menuName.equals("Calculate Interest"))
 			{
-				display.setVisible(true);
+				calcList.setVisible(true);
+				display.setVisible(false);
 				custList.setVisible(false);
 				
 				double intDue;
