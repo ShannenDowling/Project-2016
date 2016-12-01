@@ -203,7 +203,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		add = cust1.getAddress();
 			 
 		cust1.setGender(JOptionPane.showInputDialog(null,"Enter Gender"));
-		gender = cust1.getAddress();
+		gender = cust1.getGender();
 			
 		cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
 		accNo = cust1.getAccountNo();		
