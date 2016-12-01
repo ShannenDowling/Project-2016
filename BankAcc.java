@@ -15,7 +15,7 @@ public class BankAcc extends JFrame implements ActionListener{
 	JLabel logoLabel;
 	JButton registerButton, loginButton, saveCustButton, cancelButton;
 	JMenu fileMenu, customersMenu, optionsMenu;
-	JLabel buttonLabel, response;
+	JLabel buttonLabel, response, welcomeMsg;
 	JTextArea display, calcList, custList;
 	
 	Customer cust1 = new Customer();
@@ -25,7 +25,7 @@ public class BankAcc extends JFrame implements ActionListener{
 	double bal;
 	
 	//customer
-	String name, add, gender, accNo, email;  
+	String name, addr, gender, accNo, email;  
 	int age, pin;
 	double balance;
 	
@@ -71,7 +71,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		cPane.add(response);
 		
 		//label
-		JLabel welcomeMsg = new JLabel("Welcome to your Bank Account.");
+		welcomeMsg = new JLabel("Welcome to your Bank Account.");
 		cPane.add(welcomeMsg);
 		
 		buttonLabel = new JLabel("Please Register or Login: ");
@@ -200,7 +200,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		age = cust1.getAge();
 			
 		cust1.setAddress(JOptionPane.showInputDialog(null,"Enter Address"));
-		add = cust1.getAddress();
+		addr = cust1.getAddress();
 			 
 		cust1.setGender(JOptionPane.showInputDialog(null,"Enter Gender"));
 		gender = cust1.getGender();
@@ -247,9 +247,9 @@ public class BankAcc extends JFrame implements ActionListener{
 	
 	public void save() throws IOException
 	{
-		File bankFile = new File("myCustomers.dat");
+		File bankFile = new File("myCustomers.txt");
 		FileOutputStream outputStream = new FileOutputStream(bankFile);
-		ObjectOutputStream oob = new ObjectOutputStream(outputStream);					//code from examples on x drive
+		ObjectOutputStream oob = new ObjectOutputStream(outputStream);					
 		oob.writeObject(customers);
 		oob.close();
 	}
@@ -259,14 +259,18 @@ public class BankAcc extends JFrame implements ActionListener{
 		try
 		{
 			ObjectInputStream input;
-      		input = new ObjectInputStream(new FileInputStream ("myCustomers.dat"));
-        	customers  = (ArrayList<Customer>) input.readObject();							//code from examples on x drive
+      		input = new ObjectInputStream(new FileInputStream ("myCustomers.txt"));
+        	
+        	customers  = (ArrayList<Customer>) input.readObject();
+        	customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));	
+        	JOptionPane.showMessageDialog(null,customers.toString());							
+      		
       		input.close();
 		}
 		
 		catch(Exception e)
 		{
-			JOptionPane.showMessageDialog(null,"open didn't work");
+			JOptionPane.showMessageDialog(null,"Open didn't work");
       		e.printStackTrace();		
 		}	
 	}
@@ -297,7 +301,11 @@ public class BankAcc extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(null,"Customer Saved", "Save", JOptionPane.INFORMATION_MESSAGE);
 			
 			customers = new ArrayList<Customer>();
-			customers.add(new Customer (name, age, add, gender, accNo, email, pin, balance));
+			
+				for(int x=0; x<customers.size(); x++)
+				{
+					customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));
+				}
 			
 			try{
       	 		save();
@@ -343,6 +351,7 @@ public class BankAcc extends JFrame implements ActionListener{
 				calcList.setVisible(false);
 				saveCustButton.setVisible(false);
 				cancelButton.setVisible(false);
+				welcomeMsg.setVisible(false);
 				
 				if(customers.size()<1)
 				{
@@ -376,10 +385,8 @@ public class BankAcc extends JFrame implements ActionListener{
 			{
 				calcList.setVisible(false);
 				custList.setVisible(true);
-				
-				int cust;
 					
-				cust = Integer.parseInt(JOptionPane.showInputDialog(null, "Which customer would you like to remove?"));
+				int cust = Integer.parseInt(JOptionPane.showInputDialog(null, "Which customer would you like to remove?"));
 				
 				customers.remove(cust);
 			}
