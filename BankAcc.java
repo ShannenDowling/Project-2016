@@ -37,7 +37,6 @@ public class BankAcc extends JFrame implements ActionListener{
 	}
 	
 	public BankAcc(){
-		//window
 		super("Bank Account");
 		
 		setSize(400,500);
@@ -70,8 +69,8 @@ public class BankAcc extends JFrame implements ActionListener{
 		response = new JLabel();
 		cPane.add(response);
 		
-		//label
-		welcomeMsg = new JLabel("Welcome to your Bank Account.");
+		//welcome messages
+		JLabel welcomeMsg = new JLabel("Welcome to your Bank Account.");
 		cPane.add(welcomeMsg);
 		
 		buttonLabel = new JLabel("Please Register or Login: ");
@@ -87,15 +86,16 @@ public class BankAcc extends JFrame implements ActionListener{
 		loginButton.addActionListener(this);
 		cPane.add(loginButton);
 		
-		//customer
+		//display added customers 
 		display = new JTextArea();
 		cPane.add(display);
 		
+		//display calculations 
 		calcList = new JTextArea();
 		cPane.add(calcList);
 		
-		custList = new JTextArea();
-		cPane.add(custList);
+		//list of customers
+		custList = new JTextArea("Customer List");
 		
 		//saveCust
 		saveCustButton = new JButton("Save Customer");
@@ -121,6 +121,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		}
 	}
 	
+	//start menu items
 	//fileMenu
 	private void createFileMenu(){
 		
@@ -138,6 +139,11 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		fileMenu.add(item);
 		
+		item = new JMenuItem("Save");
+		item.addActionListener(this);
+		
+		fileMenu.add(item);
+		
 		item = new JMenuItem("Quit");
 		item.addActionListener(this);
 		
@@ -151,17 +157,17 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		customersMenu = new JMenu("Customers");
 		
-		item = new JMenuItem("List Customers");
-		item.addActionListener(this);
-		
-		customersMenu.add(item);
-		
 		item = new JMenuItem("Add Customer");
 		item.addActionListener(this);
 		
 		customersMenu.add(item);
 		
 		item = new JMenuItem("Remove Customer");
+		item.addActionListener(this);
+		
+		customersMenu.add(item);
+		
+		item = new JMenuItem("List Customers");
 		item.addActionListener(this);
 		
 		customersMenu.add(item);
@@ -188,9 +194,10 @@ public class BankAcc extends JFrame implements ActionListener{
 		item.addActionListener(this);
 		
 		optionsMenu.add(item);
-	}
+	}//end menu items
 	
-	//register
+	
+	//register & add customer method
 	public void add()
 	{	
 		cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
@@ -206,14 +213,28 @@ public class BankAcc extends JFrame implements ActionListener{
 		gender = cust1.getGender();
 			
 		cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
-		accNo = cust1.getAccountNo();		
+		accNo = cust1.getAccountNo();
+		
+			if(accNo.length()!=9)
+			{
+				JOptionPane.showMessageDialog(null,"Error! Pin must be 9 characters only", "Error", JOptionPane.WARNING_MESSAGE);	
+				cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
+				accNo = cust1.getAccountNo();			
+			}		
 
 		cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
 		email = cust1.getEmail();
 					
 		cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
 		pin = cust1.getPin();
-			
+		
+			if(String.valueOf(pin).length()!=4)//from http://stackoverflow.com/questions/1306727/way-to-get-number-of-digits-in-an-int accessed on 03/12/2016 at 15:38
+			{
+				JOptionPane.showMessageDialog(null,"Error! Pin must be 4 digits only", "Error", JOptionPane.WARNING_MESSAGE);	
+				cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
+				pin = cust1.getPin();			
+			}
+		
 		cust1.setBalance(Double.parseDouble(JOptionPane.showInputDialog(null,"Enter Current Balance")));
 		balance = cust1.getBalance();
 					
@@ -224,6 +245,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		cPane.add(cancelButton);
 	}
 	
+	//login method
 	public void login()
 	{
 		String adminEmail = "admin";
@@ -245,26 +267,28 @@ public class BankAcc extends JFrame implements ActionListener{
 		}
 	}
 	
+	//save method
 	public void save() throws IOException
 	{
-		File bankFile = new File("myCustomers.txt");
+		File bankFile = new File("myCustomers.dat");
 		FileOutputStream outputStream = new FileOutputStream(bankFile);
-		ObjectOutputStream oob = new ObjectOutputStream(outputStream);					
+		ObjectOutputStream oob = new ObjectOutputStream(outputStream);			
 		oob.writeObject(customers);
 		oob.close();
 	}
 	
+	//open method
 	public void open()
 	{
 		try
 		{
 			ObjectInputStream input;
-      		input = new ObjectInputStream(new FileInputStream ("myCustomers.txt"));
+      		input = new ObjectInputStream(new FileInputStream ("myCustomers.dat"));
         	
         	customers  = (ArrayList<Customer>) input.readObject();
-        	customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));	
-        	JOptionPane.showMessageDialog(null,customers.toString());							
-      		
+ 	
+        	JOptionPane.showMessageDialog(null,custList,"Saved Customers",JOptionPane.INFORMATION_MESSAGE);						
+
       		input.close();
 		}
 		
@@ -275,6 +299,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		}	
 	}
 	
+	//events
 	public void actionPerformed(ActionEvent e){
 		
 		//buttons
@@ -299,24 +324,11 @@ public class BankAcc extends JFrame implements ActionListener{
 		else if(e.getSource() == saveCustButton)
 		{
 			JOptionPane.showMessageDialog(null,"Customer Saved", "Save", JOptionPane.INFORMATION_MESSAGE);
+
+			customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));	
+			custList.setText(customers.toString());
+		}
 			
-			customers = new ArrayList<Customer>();
-			
-				for(int x=0; x<customers.size(); x++)
-				{
-					customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));
-				}
-			
-			try{
-      	 		save();
-      	 		JOptionPane.showMessageDialog(null,"Data saved successfully");
-      	 	}
-      	 	catch (IOException f){
-      	 		JOptionPane.showMessageDialog(null,
-      	 		"Not able to save the file:\nCheck the console printout for clues to why ");
-      	 		f.printStackTrace();
-			}
-		}	
 		else if(e.getSource() == cancelButton)
 		{
 			display.setText("You selected Cancel\nNo Customer Added");
@@ -326,8 +338,8 @@ public class BankAcc extends JFrame implements ActionListener{
 		else
 		{
 			String menuName;
-		
 			menuName = e.getActionCommand();
+		
 		
 			if(menuName.equals("Quit"))
 			{
@@ -340,36 +352,28 @@ public class BankAcc extends JFrame implements ActionListener{
 				open();
 			}
 			
+			else if(menuName.equals("Save"))
+			{
+				try
+				{
+      	 			save();
+      	 			JOptionPane.showMessageDialog(null,"Data saved successfully");
+      	 		}
+      	 	
+      	 		catch (IOException f)
+      	 		{
+      	 			JOptionPane.showMessageDialog(null,"Save failed:\nCheck the console printout for errors");
+      	 			f.printStackTrace();
+				}
+			}
+			
 			else if(menuName.equals("Login"))
 			{
 				login();	
 			}
 			
-			//customerMenu
-			else if(menuName.equals("List Customers"))
-			{
-				calcList.setVisible(false);
-				saveCustButton.setVisible(false);
-				cancelButton.setVisible(false);
-				welcomeMsg.setVisible(false);
-				
-				if(customers.size()<1)
-				{
-					custList.setText("No Customers to display");
-				}
-				
-				else
-				{
-					display.setVisible(false);
-					custList.setVisible(true);
-					
-					for(int x=0; x<customers.size(); x++)
-					{
-						custList.append(customers.get(x).toString());
-					}
-				}	
-			}
 			
+			//customerMenu
 			else if(menuName.equals("Add Customer"))
 			{
 				calcList.setVisible(false);
@@ -385,10 +389,26 @@ public class BankAcc extends JFrame implements ActionListener{
 			{
 				calcList.setVisible(false);
 				custList.setVisible(true);
-					
-				int cust = Integer.parseInt(JOptionPane.showInputDialog(null, "Which customer would you like to remove?"));
+				
+				int cust = Integer.parseInt(JOptionPane.showInputDialog(null, "Which customer would "
+				+ "you like to remove?"));
 				
 				customers.remove(cust);
+			}
+			
+			else if(menuName.equals("List Customers"))
+			{
+				calcList.setVisible(false);
+				saveCustButton.setVisible(false);
+				cancelButton.setVisible(false);
+				welcomeMsg.setVisible(false);
+				display.setVisible(false);
+				custList.setVisible(true);
+					
+					for(int x=0; x<customers.size(); x++)
+					{
+						custList.append(customers.get(x).toString());
+					}	
 			}
 			
 			//optionsMenu
@@ -403,12 +423,25 @@ public class BankAcc extends JFrame implements ActionListener{
 				bal = cust1.getBalance();
 				calcList.setText("Your current balance is €" + String.format("%.2f",bal));
 				
-				amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount you would like to withdraw"));
-				calcList.append("\nWithdrawal Amount: €" + String.format("%.2f",amount));
+				amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount "
+				+ "you would like to withdraw"));
 				
-				bal -= amount;
-				calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
+				if(amount>bal)
+				{
+					JOptionPane.showMessageDialog(null,"Error! Maximum Withdrawal is " + bal, "Error", JOptionPane.WARNING_MESSAGE);	
+				}
+				
+				else
+				{	
+					calcList.append("\nWithdrawal Amount: €" + String.format("%.2f",amount));
+				
+					bal -= amount;
+					cust1.setBalance(bal);
+					calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
+				}
 			}
+			
+			
 			
 			else if(menuName.equals("Lodge"))
 			{
@@ -421,11 +454,22 @@ public class BankAcc extends JFrame implements ActionListener{
 				bal = cust1.getBalance();
 				calcList.setText("Your current balance is €" + String.format("%.2f",balance));
 				
-				amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount you would like to lodge to your account"));
-				calcList.append("\nLodgement Amount: €" + String.format("%.2f",amount));
+				amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount " 
+				+ "you would like to lodge to your account"));
 				
-				bal += amount;
-				calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
+				if(bal<5)
+				{
+					JOptionPane.showMessageDialog(null,"Error! Minimum lodgement is €5", "Error", JOptionPane.WARNING_MESSAGE);	
+				}
+				
+				else
+				{	
+					calcList.append("\nLodgement Amount: €" + String.format("%.2f",amount));
+				
+					bal += amount;
+					cust1.setBalance(bal);
+					calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
+				}
 			}
 			
 			else if(menuName.equals("Calculate Interest"))
