@@ -198,7 +198,7 @@ public class BankAcc extends JFrame implements ActionListener{
 	
 	
 	//register & add customer method
-	public void add()
+	public void addCust()
 	{	
 		cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
 		name = cust1.getName();
@@ -228,7 +228,17 @@ public class BankAcc extends JFrame implements ActionListener{
 		cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
 		pin = cust1.getPin();
 		
-			if(String.valueOf(pin).length()!=4)//from http://stackoverflow.com/questions/1306727/way-to-get-number-of-digits-in-an-int accessed on 03/12/2016 at 15:38
+			/*****************************************************
+			*    Title: Way to get number of digits in an int
+			*    Author: John Saunders
+			*    Site owner/sponsor: stackoverflow.com
+			*    Date: 20/08/2009
+			*    Code version: edited Aug 21 '09 at 08:01
+			*    Availability: http://stackoverflow.com/questions/1306727/way-to-get-number-of-digits-in-an-int (Accessed on 03/12/2016)
+			*    Modified:  Names of variables and used specific length to compare and validate
+			*****************************************************/
+
+			if(String.valueOf(pin).length()!=4)//referenced code  
 			{
 				JOptionPane.showMessageDialog(null,"Error! Pin must be 4 digits only", "Error", JOptionPane.WARNING_MESSAGE);	
 				cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
@@ -244,6 +254,99 @@ public class BankAcc extends JFrame implements ActionListener{
 		cPane.add(saveCustButton);
 		cPane.add(cancelButton);
 	}
+	
+	//start calculation methods
+	public void withdraw()
+	{
+		calcList.setVisible(true);
+		display.setVisible(false);
+		custList.setVisible(false);
+					
+		double amount;
+			
+		bal = cust1.getBalance();
+		calcList.setText("Your current balance is €" + String.format("%.2f",bal));
+				
+		amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount "
+		+ "you would like to withdraw"));
+				
+			if(amount>bal)
+			{
+				JOptionPane.showMessageDialog(null,"Error! Maximum Withdrawal is " + bal, "Error", JOptionPane.WARNING_MESSAGE);	
+			}
+				
+			else
+			{	
+				calcList.append("\nWithdrawal Amount: €" + String.format("%.2f",amount));
+			
+				bal -= amount;
+				cust1.setBalance(bal);
+				calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
+			}
+	}
+	
+	public void lodge()
+	{
+		calcList.setVisible(true);
+		display.setVisible(false);
+		custList.setVisible(false);
+				
+		double amount;
+				
+		bal = cust1.getBalance();
+		calcList.setText("Your current balance is €" + String.format("%.2f",balance));
+				
+		amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount " 
+		+ "you would like to lodge to your account"));
+				
+			if(amount<5)
+			{
+				JOptionPane.showMessageDialog(null,"Error! Minimum lodgement is €5", "Error", JOptionPane.WARNING_MESSAGE);	
+			}
+				
+			else
+			{	
+				calcList.append("\nLodgement Amount: €" + String.format("%.2f",amount));
+				
+				bal += amount;
+				cust1.setBalance(bal);
+				calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
+			}
+	}
+	
+	public void interest()
+	{
+		calcList.setVisible(true);
+		display.setVisible(false);
+		custList.setVisible(false);
+				
+		double intDue;
+				
+		bal = cust1.getBalance();
+		calcList.setText("Your current balance is €" + String.format("%.2f",bal));
+		
+			if(bal<0)
+			{
+				JOptionPane.showMessageDialog(null,"Error! Invalid Balance", "Error", JOptionPane.WARNING_MESSAGE);	
+			}
+				
+			else if(bal<1000)
+			{
+				calcList.append("\nInterest Rate: 5%");
+					
+				intDue = balance * 0.05f;
+				calcList.append("\nInterest Due this month is €" + String.format("%.2f", intDue));	
+			}
+				
+			else
+			{
+				calcList.append("\nInterest Rate: 10%");
+				
+				intDue = balance * 0.10f;
+				calcList.append("\nInterest Due this month is €" + String.format("%.2f", intDue));
+			}
+				
+	}//end calcuations
 	
 	//login method
 	public void login()
@@ -305,7 +408,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		//buttons
 		if(e.getSource() == registerButton)
 		{
-			add();
+			addCust();
 			
 			registerButton.setVisible(false);
 			loginButton.setVisible(false);
@@ -325,8 +428,9 @@ public class BankAcc extends JFrame implements ActionListener{
 		{
 			JOptionPane.showMessageDialog(null,"Customer Saved", "Save", JOptionPane.INFORMATION_MESSAGE);
 
-			customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));	
-			custList.setText(customers.toString());
+			customers = new ArrayList<Customer>();
+			
+			customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));
 		}
 			
 		else if(e.getSource() == cancelButton)
@@ -382,7 +486,7 @@ public class BankAcc extends JFrame implements ActionListener{
 				saveCustButton.setVisible(true);
 				cancelButton.setVisible(true);
 				
-				add();	
+				addCust();	
 			}
 			
 			else if(menuName.equals("Remove Customer"))
@@ -414,96 +518,18 @@ public class BankAcc extends JFrame implements ActionListener{
 			//optionsMenu
 			else if(menuName.equals("Withdraw"))
 			{
-				calcList.setVisible(true);
-				display.setVisible(false);
-				custList.setVisible(false);
-					
-				double amount;
-				
-				bal = cust1.getBalance();
-				calcList.setText("Your current balance is €" + String.format("%.2f",bal));
-				
-				amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount "
-				+ "you would like to withdraw"));
-				
-				if(amount>bal)
-				{
-					JOptionPane.showMessageDialog(null,"Error! Maximum Withdrawal is " + bal, "Error", JOptionPane.WARNING_MESSAGE);	
-				}
-				
-				else
-				{	
-					calcList.append("\nWithdrawal Amount: €" + String.format("%.2f",amount));
-				
-					bal -= amount;
-					cust1.setBalance(bal);
-					calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
-				}
+				withdraw();
 			}
 			
-			
-			
+		
 			else if(menuName.equals("Lodge"))
 			{
-				calcList.setVisible(true);
-				display.setVisible(false);
-				custList.setVisible(false);
-				
-				double amount;
-				
-				bal = cust1.getBalance();
-				calcList.setText("Your current balance is €" + String.format("%.2f",balance));
-				
-				amount = Integer.parseInt(JOptionPane.showInputDialog(null,"Please enter the amount " 
-				+ "you would like to lodge to your account"));
-				
-				if(bal<5)
-				{
-					JOptionPane.showMessageDialog(null,"Error! Minimum lodgement is €5", "Error", JOptionPane.WARNING_MESSAGE);	
-				}
-				
-				else
-				{	
-					calcList.append("\nLodgement Amount: €" + String.format("%.2f",amount));
-				
-					bal += amount;
-					cust1.setBalance(bal);
-					calcList.append("\nYour new balance is €" + String.format("%.2f",bal));
-				}
+				lodge();
 			}
 			
 			else if(menuName.equals("Calculate Interest"))
 			{
-				calcList.setVisible(true);
-				display.setVisible(false);
-				custList.setVisible(false);
-				
-				double intDue;
-				
-				bal = cust1.getBalance();
-				calcList.setText("Your current balance is €" + String.format("%.2f",bal));
-				
-				if(bal<0)
-				{
-					JOptionPane.showMessageDialog(null,"Error! Invalid Balance", "Error", JOptionPane.WARNING_MESSAGE);	
-				}
-				
-				else if(bal<1000)
-				{
-					calcList.append("\nInterest Rate: 5%");
-
-					intDue = balance * 0.05f;
-					calcList.append("\nInterest Due this month is €" + String.format("%.2f", intDue));	
-				}
-				
-				else
-				{
-					calcList.append("\nInterest Rate: 10%");
-
-					intDue = balance * 0.10f;
-					calcList.append("\nInterest Due this month is €" + String.format("%.2f", intDue));
-				}
-				
+				interest();
 			}
 			
 			else 

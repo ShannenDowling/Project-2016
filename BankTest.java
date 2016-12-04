@@ -8,10 +8,7 @@ public class BankTest{
 	{
 		Customer cust1 = new Customer();
 				
-		cust1.setName("Shannen");
-		cust1.setAge(20);
-		cust1.setAddress("Ardfert");
-		cust1.setGender('F');
+		cust1.setCustomer("Shannen", 20, "Ardfert", 'F');
 		cust1.setAccountNo("12345678A");
 		cust1.setEmail("shannendowling196@hotmail.com");
 		cust1.setPin(1234);
