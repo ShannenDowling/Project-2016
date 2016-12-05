@@ -96,6 +96,7 @@ public class BankAcc extends JFrame implements ActionListener{
 		
 		//list of customers
 		custList = new JTextArea("Customer List");
+		cPane.add(custList);
 		
 		//saveCust
 		saveCustButton = new JButton("Save Customer");
@@ -200,59 +201,70 @@ public class BankAcc extends JFrame implements ActionListener{
 	//register & add customer method
 	public void addCust()
 	{	
-		cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
-		name = cust1.getName();
+		int noCusts = Integer.parseInt(JOptionPane.showInputDialog(null,"How many customers would you like to add?"));
+		
+		for(int i=0; i<noCusts; i++)
+		{
+			cust1.setName(JOptionPane.showInputDialog(null,"Enter Name"));
+			name = cust1.getName();
 		 
-		cust1.setAge(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Age")));
-		age = cust1.getAge();
+			cust1.setAge(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Age")));
+			age = cust1.getAge();
 			
-		cust1.setAddress(JOptionPane.showInputDialog(null,"Enter Address"));
-		addr = cust1.getAddress();
+			cust1.setAddress(JOptionPane.showInputDialog(null,"Enter Address"));
+			addr = cust1.getAddress();
 			 
-		cust1.setGender(JOptionPane.showInputDialog(null,"Enter Gender"));
-		gender = cust1.getGender();
+			cust1.setGender(JOptionPane.showInputDialog(null,"Enter Gender"));
+			gender = cust1.getGender();
 			
-		cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
-		accNo = cust1.getAccountNo();
+			cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
+			accNo = cust1.getAccountNo();
 		
-			if(accNo.length()!=9)
-			{
-				JOptionPane.showMessageDialog(null,"Error! Pin must be 9 characters only", "Error", JOptionPane.WARNING_MESSAGE);	
-				cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
-				accNo = cust1.getAccountNo();			
-			}		
+				if(accNo.length()!=9)
+				{
+					JOptionPane.showMessageDialog(null,"Error! Pin must be 9 characters only", "Error", JOptionPane.WARNING_MESSAGE);	
+					cust1.setAccountNo(JOptionPane.showInputDialog(null,"Enter Account Number"));
+					accNo = cust1.getAccountNo();			
+				}		
 
-		cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
-		email = cust1.getEmail();
+			cust1.setEmail(JOptionPane.showInputDialog(null,"Enter Email"));
+			email = cust1.getEmail();
 					
-		cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
-		pin = cust1.getPin();
+			cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
+			pin = cust1.getPin();
 		
-			/*****************************************************
-			*    Title: Way to get number of digits in an int
-			*    Author: John Saunders
-			*    Site owner/sponsor: stackoverflow.com
-			*    Date: 20/08/2009
-			*    Code version: edited Aug 21 '09 at 08:01
-			*    Availability: http://stackoverflow.com/questions/1306727/way-to-get-number-of-digits-in-an-int (Accessed on 03/12/2016)
-			*    Modified:  Names of variables and used specific length to compare and validate
-			*****************************************************/
+				/*****************************************************
+				*    Title: Way to get number of digits in an int
+				*    Author: John Saunders
+				*    Site owner/sponsor: stackoverflow.com
+				*    Date: 20/08/2009
+				*    Code version: edited Aug 21 '09 at 08:01
+				*    Availability: http://stackoverflow.com/questions/1306727/way-to-get-number-of-digits-in-an-int (Accessed on 03/12/2016)
+				*    Modified:  Names of variables and used specific length to compare and validate
+				*****************************************************/
 
-			if(String.valueOf(pin).length()!=4)//referenced code  
-			{
-				JOptionPane.showMessageDialog(null,"Error! Pin must be 4 digits only", "Error", JOptionPane.WARNING_MESSAGE);	
-				cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
-				pin = cust1.getPin();			
-			}
+				if(String.valueOf(pin).length()!=4)//referenced code  
+				{
+					JOptionPane.showMessageDialog(null,"Error! Pin must be 4 digits only", "Error", JOptionPane.WARNING_MESSAGE);	
+					cust1.setPin(Integer.parseInt(JOptionPane.showInputDialog(null,"Enter Pin")));
+					pin = cust1.getPin();			
+				}
 		
-		cust1.setBalance(Double.parseDouble(JOptionPane.showInputDialog(null,"Enter Current Balance")));
-		balance = cust1.getBalance();
+			cust1.setBalance(Double.parseDouble(JOptionPane.showInputDialog(null,"Enter Current Balance")));
+			balance = cust1.getBalance();
+		}
+				for(int i=0; i<noCusts; i++)
+				{	
+					display.append("Customer Info: " + cust1.toString());
 					
-		display.append("Customer Info: " + cust1.toString());
+					customers = new ArrayList<Customer>();
+					customers.add(cust1);
+				}
 			
-		Container cPane = getContentPane();
-		cPane.add(saveCustButton);
-		cPane.add(cancelButton);
+			display.setVisible(true);
+			Container cPane = getContentPane();
+			cPane.add(saveCustButton);
+			cPane.add(cancelButton);
 	}
 	
 	//start calculation methods
@@ -390,7 +402,7 @@ public class BankAcc extends JFrame implements ActionListener{
         	
         	customers  = (ArrayList<Customer>) input.readObject();
  	
-        	JOptionPane.showMessageDialog(null,custList,"Saved Customers",JOptionPane.INFORMATION_MESSAGE);						
+        	JOptionPane.showMessageDialog(null,customers,"Saved Customers",JOptionPane.INFORMATION_MESSAGE);						
 
       		input.close();
 		}
@@ -427,10 +439,8 @@ public class BankAcc extends JFrame implements ActionListener{
 		else if(e.getSource() == saveCustButton)
 		{
 			JOptionPane.showMessageDialog(null,"Customer Saved", "Save", JOptionPane.INFORMATION_MESSAGE);
-
-			customers = new ArrayList<Customer>();
 			
-			customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));
+			//customers.add(new Customer (name, age, addr, gender, accNo, email, pin, balance));
 		}
 			
 		else if(e.getSource() == cancelButton)
@@ -507,12 +517,13 @@ public class BankAcc extends JFrame implements ActionListener{
 				cancelButton.setVisible(false);
 				welcomeMsg.setVisible(false);
 				display.setVisible(false);
-				custList.setVisible(true);
 					
 					for(int x=0; x<customers.size(); x++)
 					{
 						custList.append(customers.get(x).toString());
 					}	
+						
+				custList.setVisible(true);
 			}
 			
 			//optionsMenu
